@@ -137,7 +137,7 @@ class PageUserManager(UserManager):
 class PageUser(User):
     """Cms specific user data, required for permission system
     """
-    page_user_created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="page_created_users")
+    # page_user_created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="page_created_users")
 
     objects = PageUserManager()
 
