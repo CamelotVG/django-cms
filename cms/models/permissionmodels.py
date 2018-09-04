@@ -258,10 +258,9 @@ class PageUserManager(UserManager):
     use_in_migrations = False
 
 
-class PageUser(models.Model):
+class PageUser(User):
     """Cms specific user data, required for permission system
     """
-    page_user_created_by = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="created_page_users")
 
     objects = PageUserManager()
 
