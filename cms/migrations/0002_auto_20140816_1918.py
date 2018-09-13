@@ -25,7 +25,6 @@ class Migration(migrations.Migration):
             name='PageUser',
             fields=[
                 (user_ptr_name, models.OneToOneField(primary_key=True, to=settings.AUTH_USER_MODEL, auto_created=True, parent_link=True, serialize=False, on_delete=models.CASCADE)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='created_users', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'User (page)',
