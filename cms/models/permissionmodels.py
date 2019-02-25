@@ -262,6 +262,11 @@ class PageUserManager(UserManager):
 class PageUser(User):
     """Cms specific user data, required for permission system
     """
+    cms_created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                       on_delete=models.CASCADE,
+                                       related_name="created_users",
+                                       null=True,
+                                       blank=True)
 
     objects = PageUserManager()
 
@@ -274,7 +279,9 @@ class PageUser(User):
 class PageUserGroup(Group):
     """Cms specific group data, required for permission system
     """
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="created_usergroups")
+    cms_created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                       on_delete=models.CASCADE,
+                                       related_name="created_usergroups")
 
     class Meta:
         verbose_name = _('User group (page)')

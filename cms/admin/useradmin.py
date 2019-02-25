@@ -100,13 +100,13 @@ class PageUserAdmin(GenericCmsPermissionAdmin, admin_class):
             # when a PageUser is first created
             obj.is_staff = True
             # Set the created_by field to the current user
-            obj.created_by = request.user
+            obj.cms_created_by = request.user
         super(PageUserAdmin, self).save_model(request, obj, form, change)
 
 
 class PageUserGroupAdmin(GenericCmsPermissionAdmin, admin.ModelAdmin):
     form = PageUserGroupForm
-    list_display = ('name', 'created_by')
+    list_display = ('name', 'cms_created_by')
 
     fieldsets = [
         (None, {'fields': ('name',)}),

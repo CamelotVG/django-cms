@@ -1168,7 +1168,7 @@ class PageUserAddForm(forms.ModelForm):
     def save(self, commit=True):
         user = self.cleaned_data['user']
         instance = super(PageUserAddForm, self).save(commit=False)
-        instance.created_by = self._current_user
+        instance.cms_created_by = self._current_user
 
         for field in user._meta.fields:
             # assign all the fields - we can do this, because object is
@@ -1219,7 +1219,7 @@ class PageUserGroupForm(GenericCmsPermissionForm):
 
     def save(self, commit=True):
         if not self.instance.pk:
-            self.instance.created_by = self._current_user
+            self.instance.cms_created_by = self._current_user
         return super(PageUserGroupForm, self).save(commit=commit)
 
 

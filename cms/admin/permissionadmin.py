@@ -30,7 +30,7 @@ class TabularInline(admin.TabularInline):
     pass
 
 
-class PagePermissionInlineAdmin(TabularInline):
+class PagePermissionInlineAdmin(admin.StackedInline):
     model = PagePermission
     # use special form, so we can override of user and group field
     form = PagePermissionInlineAdminForm
