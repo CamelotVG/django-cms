@@ -31,7 +31,7 @@ class PermissionsOnTestCase(CMSTestCase):
 
         data = {
             'name': 'Test group',
-            'created_by': created_by,
+            'cms_created_by': created_by,
         }
         return PageUserGroup.objects.create(**data)
 

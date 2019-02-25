@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from cms.signals.apphook import debug_server_restart, trigger_server_restart
-from cms.signals.permissions import post_save_user, post_save_user_group, pre_save_user, pre_delete_user, pre_save_group, pre_delete_group, pre_save_pagepermission, pre_delete_pagepermission, pre_save_globalpagepermission, pre_delete_globalpagepermission
+
+from cms.signals.page import pre_save_page, pre_delete_page, post_delete_page
+from cms.signals.permissions import pre_save_group, pre_delete_group, pre_save_pagepermission, pre_delete_pagepermission, pre_save_globalpagepermission, pre_delete_globalpagepermission
+from cms.signals.placeholder import pre_delete_placeholder_ref, post_delete_placeholder_ref
+from cms.signals.plugins import post_delete_plugins, pre_save_plugins, pre_delete_plugins
+from cms.signals.title import pre_save_title
 from cms.utils.conf import get_cms_setting
 
 from django.db.models import signals
 from django.dispatch import Signal
 
-from cms.models import PagePermission, GlobalPagePermission, PageUser, PageUserGroup
+
+from cms.models import Page, Title, CMSPlugin, PagePermission, GlobalPagePermission, PageUserGroup, PlaceholderReference
 from django.conf import settings
-from django.contrib.auth.models import User, Group
 
 #################### Our own signals ###################
 
@@ -82,16 +87,31 @@ urls_need_reloading.connect(
 
 if get_cms_setting('PERMISSION'):
     # only if permissions are in use
-    signals.pre_save.connect(pre_save_user, sender=User, dispatch_uid='cms_pre_save_user')
-    signals.post_save.connect(post_save_user, sender=User, dispatch_uid='cms_post_save_user')
-    signals.pre_delete.connect(pre_delete_user, sender=User, dispatch_uid='cms_pre_delete_user')
+    # signals.pre_save.connect(pre_save_user,
+    #                          sender=settings.AUTH_USER_MODEL,
+    #                          dispatch_uid='cms_pre_save_user',
+    #                          weak=False)
+    # signals.post_save.connect(post_save_user,
+    #                           sender=settings.AUTH_USER_MODEL,
+    #                           dispatch_uid='cms_post_save_user',
+    #                           weak=False)
+    # signals.pre_delete.connect(pre_delete_user,
+    #                            sender=settings.AUTH_USER_MODEL,
+    #                            dispatch_uid='cms_pre_delete_user',
+    #                            weak=False)
 
-    signals.pre_save.connect(pre_save_user, sender=PageUser, dispatch_uid='cms_pre_save_pageuser')
-    signals.pre_delete.connect(pre_delete_user, sender=PageUser, dispatch_uid='cms_pre_delete_pageuser')
+    # signals.pre_save.connect(pre_save_user,
+    #                          sender=PageUser,
+    #                          dispatch_uid='cms_pre_save_pageuser',
+    #                          weak=False)
+    # signals.pre_delete.connect(pre_delete_user,
+    #                            sender=PageUser,
+    #                            dispatch_uid='cms_pre_delete_pageuser',
+    #                            weak=False)
 
-    signals.pre_save.connect(pre_save_group, sender=Group, dispatch_uid='cms_pre_save_group')
-    signals.post_save.connect(post_save_user_group, sender=Group, dispatch_uid='cms_post_save_group')
-    signals.pre_delete.connect(pre_delete_group, sender=Group, dispatch_uid='cms_post_save_group')
+    # signals.pre_save.connect(pre_save_group, sender=Group, dispatch_uid='cms_pre_save_group')
+    # signals.post_save.connect(post_save_user_group, sender=Group, dispatch_uid='cms_post_save_group')
+    # signals.pre_delete.connect(pre_delete_group, sender=Group, dispatch_uid='cms_post_save_group')
 
     signals.pre_save.connect(pre_save_group, sender=PageUserGroup, dispatch_uid='cms_pre_save_pageusergroup')
     signals.pre_delete.connect(pre_delete_group, sender=PageUserGroup, dispatch_uid='cms_pre_delete_pageusergroup')

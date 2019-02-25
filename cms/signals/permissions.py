@@ -18,7 +18,7 @@ def post_save_user(instance, raw, created, **kwargs):
     if not creator or not created or creator.is_anonymous:
         return
 
-    page_user = PageUser(user_ptr_id=instance.pk, created_by=creator)
+    page_user = PageUser(user_ptr_id=instance.pk, cms_created_by=creator)
     page_user.__dict__.update(instance.__dict__)
     page_user.save()
 
@@ -36,9 +36,9 @@ def post_save_user_group(instance, raw, created, **kwargs):
     creator = get_current_user()
     if not creator or not created or creator.is_anonymous:
         return
-    page_user = PageUserGroup(group_ptr_id=instance.pk, created_by=creator)
-    page_user.__dict__.update(instance.__dict__)
-    page_user.save()
+    page_user_group = PageUserGroup(group_ptr_id=instance.pk, cms_created_by=creator)
+    page_user_group.__dict__.update(instance.__dict__)
+    page_user_group.save()
 
 
 def pre_save_user(instance, raw, **kwargs):

@@ -257,7 +257,7 @@ class BaseCMSTestCase(object):
         )
         data = model_to_dict(user, exclude=['groups', 'user_permissions'])
         data[parent_link_field.name] = user
-        data['created_by'] = created_by
+        data['cms_created_by'] = created_by
         return PageUser.objects.create(**data)
 
     def get_new_page_data(self, parent_id=''):

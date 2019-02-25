@@ -369,9 +369,10 @@ def create_page_user(created_by, user,
     }
     user.is_staff = True
     user.is_active = True
-    page_user = PageUser(created_by=created_by)
+    page_user = PageUser(cms_created_by=created_by)
     for field in [f.name for f in get_user_model()._meta.local_fields]:
-        setattr(page_user, field, getattr(user, field))
+        if field != 'created_by':
+            setattr(page_user, field, getattr(user, field))
     user.save()
     page_user.save()
     save_permissions(data, page_user)

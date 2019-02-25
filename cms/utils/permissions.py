@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from functools import wraps
 from threading import local
 
+from django.conf import settings
 from django.contrib.auth import get_permission_codename, get_user_model
 from django.contrib.auth.models import Group
 from django.db.models import Q
@@ -12,8 +13,10 @@ from django.utils.lru_cache import lru_cache
 
 from cms.constants import ROOT_USER_LEVEL, SCRIPT_USERNAME
 from cms.exceptions import NoPermissionsException
-from cms.models import GlobalPagePermission, Page, PagePermission
+
 from cms.utils.compat import DJANGO_1_11
+
+from cms.models import (Page, PagePermission, PageUser, PageUserGroup, GlobalPagePermission)
 from cms.utils.conf import get_cms_setting
 from cms.utils.page import get_clean_username
 
@@ -273,22 +276,29 @@ def get_subordinate_users(user, site):
         # whose page permission record has no page attached.
         qs = get_user_model().objects.distinct().filter(
                 Q(is_staff=True) &
-                Q(pageuser__created_by=user) &
+                Q(pageuser__cms_created_by=user) &
                 Q(pagepermission__page=None)
         )
         qs = qs.exclude(pk=user.pk).exclude(groups__user__pk=user.pk)
         return qs
 
+    qs = get_user_model().objects
+    page_user_ids = []
+    if getattr(settings, 'CMS_LIMIT_PERMISSIONS', None):
+        for page_user in PageUser.objects.all():
+            page_user_ids.append(page_user.user_ptr_id)
+        qs = qs.filter(id__in=page_user_ids)
     if user_level == ROOT_USER_LEVEL:
-        return get_user_model().objects.all()
+        qs = qs.all()
+        return qs
 
     page_id_allow_list = get_change_permissions_id_list(user, site, check_global=False)
 
     # normal query
-    qs = get_user_model().objects.distinct().filter(
+    qs = qs.distinct().filter(
         Q(is_staff=True) &
         (Q(pagepermission__page__id__in=page_id_allow_list) & Q(pagepermission__page__node__depth__gte=user_level))
-        | (Q(pageuser__created_by=user) & Q(pagepermission__page=None))
+        | (Q(pageuser__cms_created_by=user) & Q(pagepermission__page=None))
     )
     qs = qs.exclude(pk=user.pk).exclude(groups__user__pk=user.pk)
     return qs
@@ -301,6 +311,13 @@ def get_subordinate_groups(user, site):
     """
     from cms.utils.page_permissions import get_change_permissions_id_list
 
+    qs = Group.objects
+    page_user_group_ids = []
+    if getattr(settings, 'CMS_LIMIT_PERMISSIONS', None):
+        for page_user_group in PageUserGroup.objects.all():
+            page_user_group_ids.append(page_user_group.group_ptr_id)
+        qs = qs.filter(id__in=page_user_group_ids)
+
     try:
         user_level = get_user_permission_level(user, site)
     except NoPermissionsException:
@@ -308,10 +325,9 @@ def get_subordinate_groups(user, site):
         # return only groups created by user
         # whose page permission record has no page attached.
         groups = (
-            Group
-            .objects
+            qs
             .filter(
-                Q(pageusergroup__created_by=user) &
+                Q(pageusergroup__cms_created_by=user) &
                 Q(pagepermission__page__isnull=True)
             )
             .distinct()
@@ -321,13 +337,13 @@ def get_subordinate_groups(user, site):
         return groups
 
     if user_level == ROOT_USER_LEVEL:
-        return Group.objects.all()
+        return qs.all()
 
     page_id_allow_list = get_change_permissions_id_list(user, site, check_global=False)
 
-    return Group.objects.distinct().filter(
+    return qs.distinct().filter(
         (Q(pagepermission__page__id__in=page_id_allow_list) & Q(pagepermission__page__node__depth__gte=user_level))
-        | (Q(pageusergroup__created_by=user) & Q(pagepermission__page__isnull=True))
+        | (Q(pageusergroup__cms_created_by=user) & Q(pagepermission__page__isnull=True))
     )
 
 
