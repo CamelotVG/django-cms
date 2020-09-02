@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0020_old_tree_cleanup'),
+        ('cms', '0021_fix_pageuser_pageusergroup'),
     ]
 
     operations = [

@@ -8,7 +8,7 @@ from cms.utils.compat import DJANGO_2_0
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0021_auto_20180507_1432'),
+        ('cms', '0022_auto_20180507_1432'),
     ]
 
     operations = [
