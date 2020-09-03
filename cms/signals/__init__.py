@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from cms.signals.apphook import debug_server_restart, trigger_server_restart
-
-from cms.signals.page import pre_save_page, pre_delete_page, post_delete_page
 from cms.signals.permissions import pre_save_group, pre_delete_group, pre_save_pagepermission, pre_delete_pagepermission, pre_save_globalpagepermission, pre_delete_globalpagepermission
-from cms.signals.placeholder import pre_delete_placeholder_ref, post_delete_placeholder_ref
-from cms.signals.plugins import post_delete_plugins, pre_save_plugins, pre_delete_plugins
-from cms.signals.title import pre_save_title
 from cms.utils.conf import get_cms_setting
 
 from django.db.models import signals
